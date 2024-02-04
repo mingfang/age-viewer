@@ -34,6 +34,7 @@
     "cytoscape-klay": "^3.1.4",
     "cytoscape-spread": "^3.0.0",
     "file-saver": "^2.0.5",
+    "http-server": "^14.1.1",
     "json2csv": "^5.0.6",
     "papaparse": "^5.3.2",
     "prop-types": "^15.7.2",
@@ -50,8 +51,10 @@
     "serve": "^11.3.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
+    "dev:build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "build": "react-scripts build",
+    "start": "http-server ./build --port 3000 --proxy http://localhost:3001",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

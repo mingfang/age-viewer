@@ -10,12 +10,11 @@
     }
   ],
   "scripts": {
-    "test": "mocha -r @babel/register --exit --timeout 100000",
-    "test:ageParsing": "mocha -r @babel/register --exit --timeout 10000 ./test/ageParsing.test.js",
-    "start": "babel-node src/bin/www",
-    "start:dev": "nodemon --watch src/app.js --watch src/ --exec 'babel-node' src/bin/www",
+    "dev": "nodemon --watch src/app.js --watch src/ --exec 'babel-node' src/bin/www",
     "build": "babel -d ./build ./src -s",
-    "start:production": "node ./build/bin/www.js"
+    "start": "node ./build/bin/www.js",
+    "test": "mocha -r @babel/register --exit --timeout 100000",
+    "test:ageParsing": "mocha -r @babel/register --exit --timeout 10000 ./test/ageParsing.test.js"
   },
   "dependencies": {
     "antlr4": "4.9.3",
