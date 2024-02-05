@@ -28,13 +28,16 @@ import CypherResultTableContainer from '../../cypherresult/containers/CypherResu
 import GraphFilterModal from '../../cypherresult/components/GraphFilterModal';
 import EdgeThicknessMenu from '../../cypherresult/components/EdgeThicknessMenu';
 import Frame from '../Frame';
+import { useDispatch } from 'react-redux';
 
 const CypherResultFrame = ({
   queryComplete,
   refKey,
   isPinned,
   reqString,
+  executeCypherQuery,
 }) => {
+  const dispatch = useDispatch();
   const chartAreaRef = createRef();
   const [cytoscapeContainerKey, setCytoscapeContainerKey] = useState(uuid());
 
@@ -190,7 +193,12 @@ const CypherResultFrame = ({
           )
         }
         onSearchCancel={() => setGlobalFilter(null)}
-        onRefresh={refreshFrame}
+        onRefresh={(command)=>{
+          const req = dispatch(() => executeCypherQuery([refKey, command]));
+          req.then((response)=>{
+            refreshFrame()
+          })
+        }}
         onDownload={(type) => {
           if (type === 'csv') {
             downloadCsv();

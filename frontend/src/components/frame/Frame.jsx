@@ -33,11 +33,11 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import styles from './Frame.module.scss';
 import { removeFrame } from '../../features/frame/FrameSlice';
-import { setCommand } from '../../features/editor/EditorSlice';
 import { removeActiveRequests } from '../../features/cypher/CypherSlice';
 import EdgeWeight from '../../icons/EdgeWeight';
 import IconFilter from '../../icons/IconFilter';
 import IconSearchCancel from '../../icons/IconSearchCancel';
+import CodeMirror from '../editor/containers/CodeMirrorWapperContainer';
 
 const Frame = ({
   reqString,
@@ -54,6 +54,7 @@ const Frame = ({
   const dispatch = useDispatch();
   const [isFullScreen, setFullScreen] = useState(false);
   const [isExpand, setExpand] = useState(true);
+  const [command, setCommand] = useState(reqString)
 
   // const downloadMenu = () => (
   //   <Menu onClick={(e) => onDownload(e)}>
@@ -72,57 +73,48 @@ const Frame = ({
   return (
     <div className={`${styles.Frame} ${isFullScreen ? styles.FullScreen : ''}`}>
       <div className={styles.FrameHeader}>
-        <div className={styles.FrameHeaderText}>
-          {'$ '}
-          <strong>
-            {reqString}
-          </strong>
-          <FontAwesomeIcon
-            id={styles.toEditor}
-            title="copy to editor"
-            icon={faClone}
-            size="s"
-            onClick={() => dispatch(setCommand(reqString))}
-            style={{
-              cursor: 'pointer',
-            }}
+        <div id="codeMirrorEditor" className="form-control col-11 editor-code-wrapper">
+          <CodeMirror
+              value={reqString}
+              onChange={setCommand}
           />
         </div>
+
         <div className={styles.ButtonArea}>
           {!isTable && onThick ? (
-            <Popover placement="bottomLeft" content={thicnessMenu} trigger="click">
-              <Button
-                size="large"
-                type="link"
-                className={styles.FrameButton}
-                title="Edge Weight"
-                onClick={() => onThick()}
-              >
-                <EdgeWeight />
-              </Button>
-            </Popover>
+              <Popover placement="bottomLeft" content={thicnessMenu} trigger="click">
+                <Button
+                    size="large"
+                    type="link"
+                    className={styles.FrameButton}
+                    title="Edge Weight"
+                    onClick={() => onThick()}
+                >
+                  <EdgeWeight/>
+                </Button>
+              </Popover>
           ) : null}
           {onSearchCancel ? (
-            <Button
-              size="large"
-              type="link"
-              className={styles.FrameButton}
-              onClick={() => onSearchCancel()}
-              title="Cancel Search"
-            >
-              <IconSearchCancel />
-            </Button>
+              <Button
+                  size="large"
+                  type="link"
+                  className={styles.FrameButton}
+                  onClick={() => onSearchCancel()}
+                  title="Cancel Search"
+              >
+                <IconSearchCancel/>
+              </Button>
           ) : null}
           {onSearch ? (
-            <Button
-              size="large"
-              type="link"
-              className={styles.FrameButton}
-              onClick={() => onSearch()}
-              title="Filter/Search"
-            >
-              <IconFilter />
-            </Button>
+              <Button
+                  size="large"
+                  type="link"
+                  className={styles.FrameButton}
+                  onClick={() => onSearch()}
+                  title="Filter/Search"
+              >
+                <IconFilter/>
+              </Button>
           ) : null}
           {/* {false ? ( // en:Functionality is hidden due to */}
           {/* functional problems // ko:기능이 동작하지 않아 감춤 */}
@@ -145,33 +137,33 @@ const Frame = ({
           {/* ) */}
           {/*  : null} */}
           <Button
-            size="large"
-            type="link"
-            className={`${styles.FrameButton} ${
-              isFullScreen ? styles.activate : ''
-            }`}
-            onClick={() => setFullScreen(!isFullScreen)}
-            title="Expand"
+              size="large"
+              type="link"
+              className={`${styles.FrameButton} ${
+                  isFullScreen ? styles.activate : ''
+              }`}
+              onClick={() => setFullScreen(!isFullScreen)}
+              title="Expand"
           >
             <FontAwesomeIcon
-              icon={isFullScreen ? faCompressAlt : faExpandAlt}
-              size="lg"
+                icon={isFullScreen ? faCompressAlt : faExpandAlt}
+                size="lg"
             />
           </Button>
           {
             !isTable && onRefresh ? (
-              <Button
-                size="large"
-                type="link"
-                className={`${styles.FrameButton}`}
-                onClick={() => onRefresh()}
-                title="Refresh"
-              >
-                <FontAwesomeIcon
-                  icon={faSync}
-                  size="lg"
-                />
-              </Button>
+                <Button
+                    size="large"
+                    type="link"
+                    className={`${styles.FrameButton}`}
+                onClick={() => onRefresh(command)}
+                    title="Refresh"
+                >
+                  <FontAwesomeIcon
+                      icon={faSync}
+                      size="lg"
+                  />
+                </Button>
             ) : null
           }
           {/* <Button
@@ -185,39 +177,35 @@ const Frame = ({
             />
           </Button> */}
           <Button
-            size="large"
-            type="link"
-            className={`${styles.FrameButton}`}
-            onClick={() => setExpand(!isExpand)}
-            title={isExpand ? 'Hide' : 'Show'}
+              size="large"
+              type="link"
+              className={`${styles.FrameButton}`}
+              onClick={() => setExpand(!isExpand)}
+              title={isExpand ? 'Hide' : 'Show'}
           >
             <FontAwesomeIcon
-              icon={isExpand ? faAngleUp : faAngleDown}
-              size="lg"
+                icon={isExpand ? faAngleUp : faAngleDown}
+                size="lg"
             />
           </Button>
           <Button
-            size="large"
-            type="link"
-            className={`${styles.FrameButton}`}
-            onClick={() => {
-              if (window.confirm('Are you sure you want to close this window?')) {
+              size="large"
+              type="link"
+              className={`${styles.FrameButton}`}
+              onClick={() => {
                 dispatch(removeFrame(refKey));
                 dispatch(removeActiveRequests(refKey));
-              } else {
-                // Do nothing!
-              }
-            }}
-            title="Close Window"
+              }}
+              title="Close Window"
           >
-            <FontAwesomeIcon icon={faTimes} size="lg" />
+            <FontAwesomeIcon icon={faTimes} size="lg"/>
           </Button>
         </div>
       </div>
       <div
-        className={`${styles.FrameBody} ${isExpand ? '' : styles.Contract} ${
-          bodyNoPadding ? styles.NoPadding : ''
-        }`}
+          className={`${styles.FrameBody} ${isExpand ? '' : styles.Contract} ${
+              bodyNoPadding ? styles.NoPadding : ''
+          }`}
       >
         {children}
       </div>
